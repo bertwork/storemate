@@ -34,16 +34,14 @@ Libraries are stored in `lib/` and registered in `StoreMate.iml` and [.vscode/se
 StoreMate/
 |-- src/
 |   |-- app/                 Entry point and startup loading
-|   |-- controller/         UI-event coordination and SwingWorker operations
-|   |-- model/              Domain and report objects
-|   |   `-- repository/     JDBC queries and transactions
-|   |-- util/               Shared configuration and formatting helpers
-|   `-- view/               Swing screens, components, and dialogs
-|-- resources/              Copied resource files are also under src/resources/
+|   |-- controller/          UI-event coordination and SwingWorker operations
+|   |-- model/               Domain and report objects
+|   |   `-- repository/      JDBC queries and transactions
+|   |-- util/                Shared configuration and formatting helpers
+|   `-- view/                Swing screens, components, and dialogs
+|       `-- resources/       Database settings, fonts, images, and styles
 |-- database/query.sql       Database and sample-data setup
 |-- lib/                     Third-party JAR dependencies
-|-- bin/                     VS Code compiled output
-|-- out/                     IntelliJ compiled output
 |-- StoreMate.iml            IntelliJ module configuration
 `-- .vscode/settings.json    VS Code Java configuration
 ```
@@ -56,21 +54,23 @@ StoreMate/
 - MySQL or MariaDB
 - IntelliJ IDEA or VS Code with Java support
 
-### 2. Start MySQL
+### 2. Configure the database connection
 
-Start MySQL with Laragon or another local MySQL service. The default JDBC configuration is:
+The database configuration file is `src/resources/db.properties`. This file is excluded from version control and must be created locally if it is missing after downloading or cloning the project.
 
-```text
-URL:      jdbc:mysql://localhost:3306/db_storemate
-User:     root
-Password: (empty)
+Create `src/resources/db.properties` with the following content, then update the username and password to match your local MySQL setup:
+
+```properties
+db.url=jdbc:mysql://localhost:3306/db_storemate?useSSL=false&allowPublicKeyRetrieval=true
+db.user=root
+db.password=
 ```
 
-Database settings are in [src/resources/db.properties](src/resources/db.properties). `Database.java` merges this file over built-in Laragon defaults.
+The blank password is only appropriate for a local MySQL setup configured that way. Do not commit real database passwords. `Database.java` reads these values and falls back to the same Laragon defaults if the file is absent.
 
-### 3. Create the database
+### 3. Start MySQL and create the database
 
-Open [database/query.sql](database/query.sql) in MySQL Workbench or a database console and execute it. It creates:
+Start MySQL with Laragon or another local MySQL service. Open [database/query.sql](database/query.sql) in MySQL Workbench or a database console and execute it. It creates:
 
 - `db_storemate`
 - `categories`
@@ -184,12 +184,6 @@ flowchart LR
 | `view.dialogs` | Receipt dialog |
 | `util` | Theme, fonts, images, money, startup, and app metadata |
 
-## Full Documentation
+## Full Codebase Guide
 
-See [docs/CODEBASE_GUIDE.md](docs/CODEBASE_GUIDE.md) for:
-
-- Every source class and its responsibility
-- Object-oriented concepts demonstrated in the project
-- UI navigation and keyboard shortcuts
-- Analytics granularity rules
-- Threading and error handling
+See [docs/CODEBASE_GUIDE.md](docs/CODEBASE_GUIDE.md) for class-by-class responsibilities, OOP concepts, navigation, analytics behavior, threading, error handling, and presentation guidance.
